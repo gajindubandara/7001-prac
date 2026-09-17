@@ -25,6 +25,10 @@ public class SchedulingService {
         this.bookingRepository = Objects.requireNonNull(bookingRepository, "bookingRepository must not be null");
     }
 
+    public void addSession(Session session) throws DuplicateDataException {
+        sessionRepository.add(session);
+    }
+
     public Booking createBooking(Booking booking) throws InvalidBookingException, DuplicateDataException {
         return createRecurringBooking(Collections.singletonList(booking)).get(0);
     }
