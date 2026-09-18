@@ -17,6 +17,7 @@ import com.iwfc.users.User;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class IWFCFacade {
 
@@ -45,6 +46,10 @@ public class IWFCFacade {
     public boolean logEquipmentUsage(User actor, String equipmentId, double hours) throws UnauthorizedAccessException {
         requireRole(actor, Role.INSTRUCTOR, Role.ADMINISTRATOR);
         return equipmentService.logUsageHours(equipmentId, hours);
+    }
+
+    public Optional<Equipment> findEquipment(String equipmentId) {
+        return equipmentService.findById(equipmentId);
     }
 
     public List<Equipment> getEquipmentNeedingMaintenance(User actor) throws UnauthorizedAccessException {
