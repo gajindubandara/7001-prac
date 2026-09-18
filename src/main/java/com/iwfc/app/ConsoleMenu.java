@@ -4,6 +4,7 @@ import com.iwfc.exceptions.IWFCException;
 import com.iwfc.facade.IWFCFacade;
 import com.iwfc.model.Booking;
 import com.iwfc.model.Equipment;
+import com.iwfc.model.EquipmentStatus;
 import com.iwfc.model.EquipmentType;
 import com.iwfc.model.MaintenanceRequest;
 import com.iwfc.model.Session;
@@ -106,12 +107,14 @@ class ConsoleMenu {
         System.out.println("== Administrator menu (" + actor.getFullName() + ") ==");
         System.out.println("  1. Register new equipment");
         System.out.println("  2. Remove equipment");
-        System.out.println("  3. View equipment needing maintenance");
-        System.out.println("  4. View all maintenance requests");
-        System.out.println("  5. Assign a maintenance request");
-        System.out.println("  6. Complete a maintenance request");
-        System.out.println("  7. Cancel any booking");
-        System.out.println("  8. View all sessions");
+        System.out.println("  3. Deactivate equipment");
+        System.out.println("  4. Edit equipment (status/location)");
+        System.out.println("  5. View equipment needing maintenance");
+        System.out.println("  6. View all maintenance requests");
+        System.out.println("  7. Assign a maintenance request");
+        System.out.println("  8. Complete a maintenance request");
+        System.out.println("  9. Cancel any booking");
+        System.out.println("  10. View all sessions");
         System.out.println("  0. Logout");
         try {
             int choice = readInt("Choose an option: ");
@@ -123,21 +126,27 @@ class ConsoleMenu {
                     removeEquipment(actor);
                     break;
                 case 3:
-                    viewEquipmentNeedingMaintenance(actor);
+                    deactivateEquipment(actor);
                     break;
                 case 4:
-                    viewMaintenanceRequests(actor);
+                    editEquipment(actor);
                     break;
                 case 5:
-                    assignMaintenanceRequest(actor);
+                    viewEquipmentNeedingMaintenance(actor);
                     break;
                 case 6:
-                    completeMaintenanceRequest(actor);
+                    viewMaintenanceRequests(actor);
                     break;
                 case 7:
-                    cancelBooking(actor);
+                    assignMaintenanceRequest(actor);
                     break;
                 case 8:
+                    completeMaintenanceRequest(actor);
+                    break;
+                case 9:
+                    cancelBooking(actor);
+                    break;
+                case 10:
                     viewSessions();
                     break;
                 case 0:
@@ -232,6 +241,32 @@ class ConsoleMenu {
         String equipmentId = readLine("Equipment id to remove: ");
         facade.removeEquipment(actor, equipmentId);
         System.out.println("Removed equipment " + equipmentId);
+    }
+
+    private void deactivateEquipment(User actor) throws IWFCException {
+        String equipmentId = readLine("Equipment id to deactivate: ");
+        facade.deactivateEquipment(actor, equipmentId);
+        System.out.println("Deactivated equipment " + equipmentId);
+    }
+
+    private void editEquipment(User actor) throws IWFCException {
+        String equipmentId = readLine("Equipment id to edit: ");
+        System.out.println("Edit: 1. Status  2. Location");
+        int choice = readInt("Choice: ");
+        switch (choice) {
+            case 1:
+                EquipmentStatus status = chooseEnum(EquipmentStatus.class, "status");
+                facade.updateEquipmentStatus(actor, equipmentId, status);
+                System.out.println("Updated status for " + equipmentId);
+                break;
+            case 2:
+                Zone zone = chooseEnum(Zone.class, "zone");
+                facade.updateEquipmentLocation(actor, equipmentId, zone);
+                System.out.println("Updated location for " + equipmentId);
+                break;
+            default:
+                System.out.println("Invalid choice.");
+        }
     }
 
     private void viewEquipmentNeedingMaintenance(User actor) throws IWFCException {

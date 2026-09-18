@@ -2,6 +2,7 @@ package com.iwfc.service;
 
 import com.iwfc.exceptions.DuplicateDataException;
 import com.iwfc.model.Equipment;
+import com.iwfc.model.EquipmentStatus;
 import com.iwfc.model.Zone;
 import com.iwfc.model.equipment.SpinBike;
 import com.iwfc.model.equipment.Treadmill;
@@ -72,7 +73,7 @@ class EquipmentServiceTest {
         Treadmill deactivated = new Treadmill("EQ-1", Zone.CARDIO_ZONE);
         equipmentService.registerEquipment(deactivated);
         equipmentService.logUsageHours("EQ-1", 200);
-        deactivated.deactivate();
+        equipmentService.deactivateEquipment("EQ-1");
 
         SpinBike stillActive = new SpinBike("EQ-2", Zone.SPIN_STUDIO);
         equipmentService.registerEquipment(stillActive);
@@ -82,5 +83,40 @@ class EquipmentServiceTest {
 
         assertEquals(1, needingMaintenance.size());
         assertEquals("EQ-2", needingMaintenance.get(0).getEquipmentId());
+    }
+
+    @Test
+    void deactivateEquipmentMarksItInactive() throws DuplicateDataException {
+        Treadmill treadmill = new Treadmill("EQ-1", Zone.CARDIO_ZONE);
+        equipmentService.registerEquipment(treadmill);
+
+        equipmentService.deactivateEquipment("EQ-1");
+
+        assertFalse(equipmentService.findById("EQ-1").get().isActive());
+    }
+
+    @Test
+    void deactivateUnknownEquipmentThrows() {
+        assertThrows(IllegalArgumentException.class, () -> equipmentService.deactivateEquipment("missing"));
+    }
+
+    @Test
+    void updateEquipmentStatusChangesStatus() throws DuplicateDataException {
+        Treadmill treadmill = new Treadmill("EQ-1", Zone.CARDIO_ZONE);
+        equipmentService.registerEquipment(treadmill);
+
+        equipmentService.updateEquipmentStatus("EQ-1", EquipmentStatus.FAULTY);
+
+        assertEquals(EquipmentStatus.FAULTY, equipmentService.findById("EQ-1").get().getStatus());
+    }
+
+    @Test
+    void updateEquipmentLocationChangesZone() throws DuplicateDataException {
+        Treadmill treadmill = new Treadmill("EQ-1", Zone.CARDIO_ZONE);
+        equipmentService.registerEquipment(treadmill);
+
+        equipmentService.updateEquipmentLocation("EQ-1", Zone.STUDIO_A);
+
+        assertEquals(Zone.STUDIO_A, equipmentService.findById("EQ-1").get().getLocation());
     }
 }
