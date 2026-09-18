@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+// Facade pattern - the menu only ever talks to this class, never the services directly.
+// Keeps all the role/identity checks in one place instead of copy-pasted into every service.
 public class IWFCFacade {
 
     private final EquipmentService equipmentService;

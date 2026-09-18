@@ -87,6 +87,8 @@ public class SchedulingService {
     }
 
     private void validateNoZoneClash(Session newSession) throws InvalidBookingException {
+        // Only looks at Sessions that already exist. A recurring booking doesn't spawn real
+        // Session objects for its future weeks, so there's nothing there yet to clash-check.
         boolean clash = sessionRepository.findAll().stream()
                 .filter(existing -> existing.getLocation() == newSession.getLocation())
                 .anyMatch(existing -> timesOverlap(existing, newSession));
@@ -110,6 +112,8 @@ public class SchedulingService {
     private boolean clashesWith(Booking existingBooking, Session newSession) {
         Session existingSession = existingBooking.getSession();
         if (existingBooking.isRecurring()) {
+            // Recurring bookings don't have real future Sessions to compare against, so we fake
+            // it: same weekday + overlapping time-of-day counts as a clash on any future week.
             return existingSession.getStartTime().getDayOfWeek() == newSession.getStartTime().getDayOfWeek()
                     && timeRangesOverlap(existingSession, newSession);
         }

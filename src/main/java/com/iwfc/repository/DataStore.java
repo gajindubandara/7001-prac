@@ -6,6 +6,8 @@ import com.iwfc.model.MaintenanceRequest;
 import com.iwfc.model.Session;
 import com.iwfc.users.User;
 
+// Singleton pattern - one instance for the whole app, so every service reads and writes
+// the same repositories instead of each ending up with its own private copy of the data.
 public final class DataStore {
 
     private static final DataStore INSTANCE = new DataStore();

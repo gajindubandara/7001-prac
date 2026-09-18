@@ -11,6 +11,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
+// Generic in-memory store keyed by id. Takes an id-extractor function instead of requiring
+// T to implement some "Identifiable" interface - that way the same class works for
+// Equipment, Session, User, whatever, even though they don't share anything else.
 public class Repository<T> {
 
     private final Map<String, T> items;

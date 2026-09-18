@@ -253,6 +253,8 @@ class ConsoleMenu {
         printList("User accounts", facade.listUsers(actor));
     }
 
+    // Didn't bother with a factory class here like we did for equipment - Role only has
+    // 3 values and they map 1:1 onto the 3 User subclasses, so a plain switch is enough.
     private User createUser(Role role, String userId, String fullName, String email) {
         switch (role) {
             case ADMINISTRATOR:
