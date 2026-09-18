@@ -2,6 +2,8 @@ package com.iwfc.service;
 
 import com.iwfc.exceptions.DuplicateDataException;
 import com.iwfc.model.Equipment;
+import com.iwfc.model.EquipmentStatus;
+import com.iwfc.model.Zone;
 import com.iwfc.repository.Repository;
 
 import java.util.List;
@@ -31,6 +33,18 @@ public class EquipmentService {
 
     public boolean removeEquipment(String equipmentId) {
         return equipmentRepository.removeById(equipmentId);
+    }
+
+    public void deactivateEquipment(String equipmentId) {
+        getRequiredEquipment(equipmentId).deactivate();
+    }
+
+    public void updateEquipmentStatus(String equipmentId, EquipmentStatus status) {
+        getRequiredEquipment(equipmentId).updateStatus(status);
+    }
+
+    public void updateEquipmentLocation(String equipmentId, Zone location) {
+        getRequiredEquipment(equipmentId).updateLocation(location);
     }
 
     public boolean logUsageHours(String equipmentId, double hours) {

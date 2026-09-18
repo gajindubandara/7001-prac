@@ -5,8 +5,10 @@ import com.iwfc.exceptions.InvalidBookingException;
 import com.iwfc.exceptions.UnauthorizedAccessException;
 import com.iwfc.model.Booking;
 import com.iwfc.model.Equipment;
+import com.iwfc.model.EquipmentStatus;
 import com.iwfc.model.MaintenanceRequest;
 import com.iwfc.model.Session;
+import com.iwfc.model.Zone;
 import com.iwfc.service.EquipmentService;
 import com.iwfc.service.MaintenanceService;
 import com.iwfc.service.SchedulingService;
@@ -41,6 +43,23 @@ public class IWFCFacade {
     public void removeEquipment(User actor, String equipmentId) throws UnauthorizedAccessException {
         requireRole(actor, Role.ADMINISTRATOR);
         equipmentService.removeEquipment(equipmentId);
+    }
+
+    public void deactivateEquipment(User actor, String equipmentId) throws UnauthorizedAccessException {
+        requireRole(actor, Role.ADMINISTRATOR);
+        equipmentService.deactivateEquipment(equipmentId);
+    }
+
+    public void updateEquipmentStatus(User actor, String equipmentId, EquipmentStatus status)
+            throws UnauthorizedAccessException {
+        requireRole(actor, Role.ADMINISTRATOR);
+        equipmentService.updateEquipmentStatus(equipmentId, status);
+    }
+
+    public void updateEquipmentLocation(User actor, String equipmentId, Zone location)
+            throws UnauthorizedAccessException {
+        requireRole(actor, Role.ADMINISTRATOR);
+        equipmentService.updateEquipmentLocation(equipmentId, location);
     }
 
     public boolean logEquipmentUsage(User actor, String equipmentId, double hours) throws UnauthorizedAccessException {
