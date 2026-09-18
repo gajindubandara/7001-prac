@@ -13,14 +13,17 @@ import com.iwfc.repository.Repository;
 import com.iwfc.service.EquipmentService;
 import com.iwfc.service.MaintenanceService;
 import com.iwfc.service.SchedulingService;
+import com.iwfc.service.UserService;
 import com.iwfc.users.Administrator;
 import com.iwfc.users.Instructor;
 import com.iwfc.users.Member;
+import com.iwfc.users.User;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -40,7 +43,8 @@ class IWFCFacadeTest {
                 new Repository<>(Session::getSessionId), new Repository<>(Booking::getBookingId));
         MaintenanceService maintenanceService = new MaintenanceService(
                 new Repository<>(MaintenanceRequest::getRequestId), new NotificationService());
-        facade = new IWFCFacade(equipmentService, schedulingService, maintenanceService);
+        UserService userService = new UserService(new Repository<>(User::getUserId));
+        facade = new IWFCFacade(equipmentService, schedulingService, maintenanceService, userService);
 
         admin = new Administrator("U-ADMIN", "Alice Admin", "alice@iwfc.local");
         instructor = new Instructor("U-INSTR", "Ian Instructor", "ian@iwfc.local");
@@ -66,8 +70,28 @@ class IWFCFacadeTest {
 
     @Test
     void memberCannotViewMaintenanceRequests() {
-        // the brief's own example of unauthorized access: a Member reading the Administrator's maintenance log
         assertThrows(UnauthorizedAccessException.class, () -> facade.listMaintenanceRequests(member));
+    }
+
+    @Test
+    void memberCannotRegisterUser() {
+        Member newMember = new Member("U-MEMBER-3", "Nia New", "nia@iwfc.local");
+
+        assertThrows(UnauthorizedAccessException.class, () -> facade.registerUser(member, newMember));
+    }
+
+    @Test
+    void administratorCanRegisterAndListUsers() throws Exception {
+        facade.registerUser(admin, member);
+
+        List<User> users = facade.listUsers(admin);
+
+        assertTrue(users.contains(member));
+    }
+
+    @Test
+    void memberCannotListUsers() {
+        assertThrows(UnauthorizedAccessException.class, () -> facade.listUsers(member));
     }
 
     @Test

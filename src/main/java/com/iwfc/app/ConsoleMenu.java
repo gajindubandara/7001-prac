@@ -18,6 +18,8 @@ import com.iwfc.model.session.YogaSession;
 import com.iwfc.factory.EquipmentFactory;
 import com.iwfc.users.Administrator;
 import com.iwfc.users.Instructor;
+import com.iwfc.users.Member;
+import com.iwfc.users.Role;
 import com.iwfc.users.User;
 
 import java.time.LocalDateTime;
@@ -115,6 +117,8 @@ class ConsoleMenu {
         System.out.println("  8. Complete a maintenance request");
         System.out.println("  9. Cancel any booking");
         System.out.println("  10. View all sessions");
+        System.out.println("  11. Register new user account");
+        System.out.println("  12. View all user accounts");
         System.out.println("  0. Logout");
         try {
             int choice = readInt("Choose an option: ");
@@ -148,6 +152,12 @@ class ConsoleMenu {
                     break;
                 case 10:
                     viewSessions();
+                    break;
+                case 11:
+                    registerUser(actor);
+                    break;
+                case 12:
+                    viewUsers(actor);
                     break;
                 case 0:
                     return false;
@@ -226,6 +236,32 @@ class ConsoleMenu {
             System.out.println("Action failed: " + e.getMessage());
         }
         return true;
+    }
+
+    private void registerUser(User actor) throws IWFCException {
+        Role role = chooseEnum(Role.class, "role");
+        String userId = readLine("User id: ");
+        String fullName = readLine("Full name: ");
+        String email = readLine("Email: ");
+        User newUser = createUser(role, userId, fullName, email);
+        facade.registerUser(actor, newUser);
+        users.add(newUser);
+        System.out.println("Registered: " + newUser);
+    }
+
+    private void viewUsers(User actor) throws IWFCException {
+        printList("User accounts", facade.listUsers(actor));
+    }
+
+    private User createUser(Role role, String userId, String fullName, String email) {
+        switch (role) {
+            case ADMINISTRATOR:
+                return new Administrator(userId, fullName, email);
+            case INSTRUCTOR:
+                return new Instructor(userId, fullName, email);
+            default:
+                return new Member(userId, fullName, email);
+        }
     }
 
     private void registerEquipment(User actor) throws IWFCException {
@@ -338,7 +374,7 @@ class ConsoleMenu {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No session found with id: " + sessionId));
         int recurrenceWeeks = readInt("Recurring weekly for how many weeks (0 = one-off): ");
-        Booking booking = new Booking(shortId("BK"), (com.iwfc.users.Member) actor, session,
+        Booking booking = new Booking(shortId("BK"), (Member) actor, session,
                 LocalDateTime.now(), recurrenceWeeks);
         facade.bookSession(actor, booking);
         System.out.println("Booked: " + booking);

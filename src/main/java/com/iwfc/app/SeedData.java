@@ -18,7 +18,7 @@ import com.iwfc.users.Member;
 import com.iwfc.users.User;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 final class SeedData {
@@ -48,7 +48,11 @@ final class SeedData {
         facade.scheduleSession(instructor, hiit);
         facade.scheduleSession(instructor, yoga);
 
-        return Arrays.asList(admin, instructor, member);
+        List<User> users = new ArrayList<>();
+        users.add(admin);
+        users.add(instructor);
+        users.add(member);
+        return users;
     }
 
     private static LocalDateTime nextWeekdayAt(int hour, int minute) {
