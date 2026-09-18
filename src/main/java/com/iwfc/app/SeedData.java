@@ -1,6 +1,7 @@
 package com.iwfc.app;
 
 import com.iwfc.exceptions.DuplicateDataException;
+import com.iwfc.exceptions.InvalidBookingException;
 import com.iwfc.exceptions.UnauthorizedAccessException;
 import com.iwfc.facade.IWFCFacade;
 import com.iwfc.model.Equipment;
@@ -26,7 +27,7 @@ final class SeedData {
     }
 
     static List<User> load(DataStore dataStore, IWFCFacade facade)
-            throws DuplicateDataException, UnauthorizedAccessException {
+            throws DuplicateDataException, UnauthorizedAccessException, InvalidBookingException {
         Administrator admin = new Administrator("U-ADMIN", "Alice Admin", "alice@iwfc.local");
         Instructor instructor = new Instructor("U-INSTR", "Ian Instructor", "ian@iwfc.local");
         Member member = new Member("U-MEMBER", "Mona Member", "mona@iwfc.local");

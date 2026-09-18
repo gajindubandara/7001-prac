@@ -57,7 +57,8 @@ public class IWFCFacade {
         return equipmentService.getEquipmentNeedingMaintenance();
     }
 
-    public void scheduleSession(User actor, Session session) throws UnauthorizedAccessException, DuplicateDataException {
+    public void scheduleSession(User actor, Session session)
+            throws UnauthorizedAccessException, DuplicateDataException, InvalidBookingException {
         requireRole(actor, Role.INSTRUCTOR, Role.ADMINISTRATOR);
         schedulingService.addSession(session);
     }

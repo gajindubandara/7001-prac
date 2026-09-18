@@ -25,7 +25,8 @@ public class SchedulingService {
         this.bookingRepository = Objects.requireNonNull(bookingRepository, "bookingRepository must not be null");
     }
 
-    public void addSession(Session session) throws DuplicateDataException {
+    public void addSession(Session session) throws DuplicateDataException, InvalidBookingException {
+        validateNoZoneClash(session);
         sessionRepository.add(session);
     }
 
@@ -82,6 +83,16 @@ public class SchedulingService {
         if (crossesMidnight || start.isBefore(OPENING_TIME) || end.isAfter(CLOSING_TIME)) {
             throw new InvalidBookingException("Session " + session.getSessionId()
                     + " falls outside operating hours (" + OPENING_TIME + "-" + CLOSING_TIME + ")");
+        }
+    }
+
+    private void validateNoZoneClash(Session newSession) throws InvalidBookingException {
+        boolean clash = sessionRepository.findAll().stream()
+                .filter(existing -> existing.getLocation() == newSession.getLocation())
+                .anyMatch(existing -> timesOverlap(existing, newSession));
+        if (clash) {
+            throw new InvalidBookingException("Zone " + newSession.getLocation()
+                    + " already has a session scheduled that overlaps this time");
         }
     }
 

@@ -50,6 +50,27 @@ class SchedulingServiceTest {
     }
 
     @Test
+    void addSessionRejectsOverlappingSessionInSameZone() throws Exception {
+        schedulingService.addSession(new HiitSession("SE-1", instructor, Zone.STUDIO_A,
+                LocalDateTime.of(2026, 9, 21, 9, 0), 45));
+        HiitSession overlapping = new HiitSession("SE-2", instructor, Zone.STUDIO_A,
+                LocalDateTime.of(2026, 9, 21, 9, 15), 45);
+
+        assertThrows(InvalidBookingException.class, () -> schedulingService.addSession(overlapping));
+    }
+
+    @Test
+    void addSessionAllowsOverlappingTimeInDifferentZones() throws Exception {
+        schedulingService.addSession(new HiitSession("SE-1", instructor, Zone.STUDIO_A,
+                LocalDateTime.of(2026, 9, 21, 9, 0), 45));
+
+        schedulingService.addSession(new HiitSession("SE-2", instructor, Zone.STUDIO_B,
+                LocalDateTime.of(2026, 9, 21, 9, 0), 45));
+
+        assertEquals(2, schedulingService.listSessions().size());
+    }
+
+    @Test
     void createBookingOutsideOperatingHoursThrows() throws Exception {
         // starts 21:30, duration 45m -> ends 22:15, past the 22:00 closing time
         HiitSession session = new HiitSession("SE-1", instructor, Zone.STUDIO_A,
