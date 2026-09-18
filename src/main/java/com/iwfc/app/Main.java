@@ -7,6 +7,7 @@ import com.iwfc.repository.DataStore;
 import com.iwfc.service.EquipmentService;
 import com.iwfc.service.MaintenanceService;
 import com.iwfc.service.SchedulingService;
+import com.iwfc.service.UserService;
 import com.iwfc.users.User;
 
 import java.util.List;
@@ -25,7 +26,8 @@ public final class Main {
         NotificationService notificationService = new NotificationService();
         MaintenanceService maintenanceService =
                 new MaintenanceService(dataStore.getMaintenanceRequestRepository(), notificationService);
-        IWFCFacade facade = new IWFCFacade(equipmentService, schedulingService, maintenanceService);
+        UserService userService = new UserService(dataStore.getUserRepository());
+        IWFCFacade facade = new IWFCFacade(equipmentService, schedulingService, maintenanceService, userService);
 
         try {
             List<User> users = SeedData.load(dataStore, facade);

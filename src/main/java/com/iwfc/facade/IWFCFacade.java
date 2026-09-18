@@ -12,6 +12,7 @@ import com.iwfc.model.Zone;
 import com.iwfc.service.EquipmentService;
 import com.iwfc.service.MaintenanceService;
 import com.iwfc.service.SchedulingService;
+import com.iwfc.service.UserService;
 import com.iwfc.users.Administrator;
 import com.iwfc.users.Role;
 import com.iwfc.users.User;
@@ -26,12 +27,24 @@ public class IWFCFacade {
     private final EquipmentService equipmentService;
     private final SchedulingService schedulingService;
     private final MaintenanceService maintenanceService;
+    private final UserService userService;
 
     public IWFCFacade(EquipmentService equipmentService, SchedulingService schedulingService,
-                       MaintenanceService maintenanceService) {
+                       MaintenanceService maintenanceService, UserService userService) {
         this.equipmentService = Objects.requireNonNull(equipmentService, "equipmentService must not be null");
         this.schedulingService = Objects.requireNonNull(schedulingService, "schedulingService must not be null");
         this.maintenanceService = Objects.requireNonNull(maintenanceService, "maintenanceService must not be null");
+        this.userService = Objects.requireNonNull(userService, "userService must not be null");
+    }
+
+    public void registerUser(User actor, User newUser) throws UnauthorizedAccessException, DuplicateDataException {
+        requireRole(actor, Role.ADMINISTRATOR);
+        userService.registerUser(newUser);
+    }
+
+    public List<User> listUsers(User actor) throws UnauthorizedAccessException {
+        requireRole(actor, Role.ADMINISTRATOR);
+        return userService.listAll();
     }
 
     public void registerEquipment(User actor, Equipment equipment)
