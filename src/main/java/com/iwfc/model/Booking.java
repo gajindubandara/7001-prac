@@ -5,6 +5,8 @@ import com.iwfc.users.Member;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+// Composition, not inheritance - a Booking *has* a Member and a Session rather than
+// extending either one. Keeps a booking's own lifecycle (cancel) independent of both.
 public class Booking {
 
     private final String bookingId;

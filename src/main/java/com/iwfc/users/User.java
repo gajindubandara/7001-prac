@@ -2,6 +2,8 @@ package com.iwfc.users;
 
 import java.util.Objects;
 
+// Encapsulation: every field is private final, so once a User exists its identity
+// can't be changed from outside - only the getters below can read it.
 public abstract class User {
 
     private final String userId;
@@ -32,8 +34,14 @@ public abstract class User {
         return role;
     }
 
+    // Abstract method = compile-time contract, runtime polymorphism: which version runs
+    // depends on the real subclass (Administrator/Instructor/Member), not on the `User`
+    // type a caller might be holding the reference as.
     public abstract String getDashboardSummary();
 
+    // Equality by id only - two User objects with the same id count as "the same person"
+    // even if other fields somehow differed. IWFCFacade's self-booking check
+    // (actor.equals(booking.getMember())) relies on exactly this.
     @Override
     public boolean equals(Object o) {
         if (this == o) {

@@ -53,6 +53,8 @@ public class EquipmentService {
         return equipment.needsMaintenanceAlert();
     }
 
+    // Method references in the stream - Equipment::isActive here is shorthand for
+    // `e -> e.isActive()`. Same idea as the idExtractor function Repository takes in.
     public List<Equipment> getEquipmentNeedingMaintenance() {
         return equipmentRepository.findAll().stream()
                 .filter(Equipment::isActive)
