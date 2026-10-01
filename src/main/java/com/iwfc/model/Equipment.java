@@ -2,6 +2,9 @@ package com.iwfc.model;
 
 import java.util.Objects;
 
+// Encapsulation: location/status/usageHours/active are private and only change through
+// the controlled methods below (updateLocation, logUsageHours, deactivate) - never a
+// public setter - so an invariant like "hours can't go negative" can't be bypassed.
 public abstract class Equipment {
 
     private final String equipmentId;
@@ -61,6 +64,9 @@ public abstract class Equipment {
         this.usageHours += hours;
     }
 
+    // Calls getMaintenanceThresholdHours() polymorphically - a Treadmill, SpinBike and
+    // GenericEquipment all answer this differently, and this method doesn't need to know
+    // or care which one it's actually talking to.
     public boolean needsMaintenanceAlert() {
         return usageHours >= getMaintenanceThresholdHours();
     }

@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+// Abstract base - enrollMember/withdrawMember/isFull all live here once; a concrete
+// session type only has to answer one question: getCapacity().
 public abstract class Session {
 
     private final String sessionId;
@@ -68,6 +70,8 @@ public abstract class Session {
 
     public abstract int getCapacity();
 
+    // Returns a read-only view, not the real list - callers can look but can't add/remove
+    // a member by mutating what they got back; that has to go through enrollMember/withdrawMember.
     public List<String> getEnrolledMemberIds() {
         return Collections.unmodifiableList(enrolledMemberIds);
     }

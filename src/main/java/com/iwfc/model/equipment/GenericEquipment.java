@@ -16,6 +16,9 @@ public class GenericEquipment extends Equipment {
         this.maintenanceThresholdHours = maintenanceThresholdHours;
     }
 
+    // Same abstract method as Treadmill, but answered from a stored field instead of a
+    // hardcoded constant - lets one class stand in for every EquipmentType the factory
+    // doesn't have a dedicated subclass for.
     @Override
     public double getMaintenanceThresholdHours() {
         return maintenanceThresholdHours;
